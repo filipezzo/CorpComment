@@ -4,6 +4,12 @@ const formEl = document.querySelector(".form");
 const listEl = document.querySelector(".feedbacks");
 const submitBtnEl = document.querySelector(".submit-btn");
 
+const showVisualIndicator = (textValid) => {
+  const className = textValid === "valid" ? "form--valid" : "form--invalid";
+  formEl.classList.add(className);
+  setTimeout(() => formEl.classList.remove(className), 2000);
+};
+
 const handleInput = () => {
   const maxCh = 150;
   const nTyped = textareaEl.value.length;
@@ -16,16 +22,10 @@ const handleSubmit = (e) => {
   const text = textareaEl.value;
 
   if (text.includes("#") && text.length >= 5) {
-    formEl.classList.add("form--valid");
-    setTimeout(() => formEl.classList.remove("form--valid"), 2000);
+    showVisualIndicator("valid");
   } else {
-    formEl.classList.add("form--invalid");
-    setTimeout(() => {
-      formEl.classList.remove("form--invalid");
-    }, 2000);
-
+    showVisualIndicator("invalid");
     textareaEl.focus();
-
     return;
   }
 
