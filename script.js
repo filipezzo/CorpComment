@@ -3,6 +3,7 @@ const counterEl = document.querySelector(".counter");
 const formEl = document.querySelector(".form");
 const listEl = document.querySelector(".feedbacks");
 const submitBtnEl = document.querySelector(".submit-btn");
+const spinner = document.querySelector(".spinner");
 
 const showVisualIndicator = (textValid) => {
   const className = textValid === "valid" ? "form--valid" : "form--invalid";
@@ -61,3 +62,32 @@ const handleSubmit = (e) => {
 
 textareaEl.addEventListener("input", handleInput);
 formEl.addEventListener("submit", handleSubmit);
+
+fetch("https://bytegrad.com/course-assets/js/1/api/feedbacks")
+  .then((res) => res.json())
+  .then((data) => {
+    spinner.remove();
+    data.feedbacks.forEach((d) => {
+      const feedbackItemHTML = `
+    <li class="feedback">
+    <button class="upvote">
+        <i class="fa-solid fa-caret-up upvote__icon"></i>
+        <span class="upvote__count">${d.upvoteCount}</span>
+    </button>
+    <section class="feedback__badge">
+        <p class="feedback__letter">${d.badgeLetter}</p>
+    </section>
+    <div class="feedback__content">
+        <p class="feedback__company">${d.company}</p>
+        <p class="feedback__text">${d.text}</p>
+    </div>
+    <p class="feedback__date">${d.daysAgo === 0 ? "NEW" : `${d.daysAgo}d`}</p>
+  </li>
+  `;
+
+      listEl.insertAdjacentHTML("beforeend", feedbackItemHTML);
+    });
+  })
+  .catch((error) => {
+    listEl.textContent = `Sorry something went wrong :(  ${error}`;
+  });
