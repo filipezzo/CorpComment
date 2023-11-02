@@ -2,6 +2,7 @@ const textareaEl = document.querySelector(".form__textarea");
 const counterEl = document.querySelector(".counter");
 const formEl = document.querySelector(".form");
 const listEl = document.querySelector(".feedbacks");
+const submitBtnEl = document.querySelector(".submit-btn");
 
 const handleInput = () => {
   const maxCh = 150;
@@ -47,11 +48,15 @@ const handleSubmit = (e) => {
         <p class="feedback__company">${companyName}</p>
         <p class="feedback__text">${text}</p>
     </div>
-    <p class="feedback__date">${daysAgo === 0 ? "New" : daysAgo + "d"}</p>
+    <p class="feedback__date">${daysAgo === 0 ? "NEW" : `${daysAgo}d`}</p>
   </li>
   `;
 
   listEl.insertAdjacentHTML("beforeend", feedbackItemHTML);
+
+  textareaEl.value = "";
+  submitBtnEl.blur();
+  counterEl.textContent = 150;
 };
 
 textareaEl.addEventListener("input", handleInput);
