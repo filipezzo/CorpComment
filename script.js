@@ -6,6 +6,7 @@ const listEl = document.querySelector(".feedbacks");
 const submitBtnEl = document.querySelector(".submit-btn");
 const spinner = document.querySelector(".spinner");
 const upvote = document.querySelector(".upvote");
+const hashtagListEl = document.querySelector(".hashtags");
 
 const renderFeedbackItem = (feedbackItem) => {
   const feedbackItemHTML = `
@@ -119,3 +120,26 @@ fetch(`${BASE_API}/feedbacks`)
   .catch((error) => {
     listEl.textContent = `Sorry something went wrong :(  ${error}`;
   });
+
+const handleHashtagListClick = (e) => {
+  const clickedEl = e.target;
+  if (clickedEl.className === "hashtags") return;
+  const companyNameFromHash = clickedEl.textContent
+    .substring(1)
+    .toLowerCase()
+    .trim();
+
+  listEl.childNodes.forEach((child) => {
+    if (child.nodeType === 3) return;
+
+    const companyNameFromItem = child
+      .querySelector(".feedback__company")
+      .textContent.toLowerCase()
+      .trim();
+
+    if (companyNameFromHash !== companyNameFromItem) {
+      child.remove();
+    }
+  });
+};
+hashtagListEl.addEventListener("click", handleHashtagListClick);
