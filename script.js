@@ -1,9 +1,11 @@
+const BASE_API = "https://bytegrad.com/course-assets/js/1/api";
 const textareaEl = document.querySelector(".form__textarea");
 const counterEl = document.querySelector(".counter");
 const formEl = document.querySelector(".form");
 const listEl = document.querySelector(".feedbacks");
 const submitBtnEl = document.querySelector(".submit-btn");
 const spinner = document.querySelector(".spinner");
+const upvote = document.querySelector(".upvote");
 
 const renderFeedbackItem = (feedbackItem) => {
   const feedbackItemHTML = `
@@ -62,15 +64,51 @@ const handleSubmit = (e) => {
 
   renderFeedbackItem(feedbackObject);
 
+  fetch(`${BASE_API}/feedbacks`, {
+    method: "POST",
+    body: JSON.stringify(feedbackObject),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        console.log("something went wrong");
+        return;
+      }
+
+      console.log("successfuly submitted");
+    })
+    .catch((erro) => console.log(erro));
+
   textareaEl.value = "";
   submitBtnEl.blur();
   counterEl.textContent = 150;
 };
 
+const handleListClick = (e) => {
+  const clickedEl = e.target;
+  const upvoteIntention = clickedEl.className.includes("upvote");
+
+  if (upvoteIntention) {
+    const upvoteBtnEl = clickedEl.closest(".upvote");
+    upvoteBtnEl.disabled = true;
+    const upvoteCountEl = upvoteBtnEl.querySelector(".upvote__count");
+    let count = +upvoteCountEl.textContent;
+
+    count++;
+    upvoteCountEl.textContent = count;
+  } else {
+    clickedEl.closest(".feedback").classList.toggle("feedback--expand");
+  }
+};
+
 textareaEl.addEventListener("input", handleInput);
 formEl.addEventListener("submit", handleSubmit);
+listEl.addEventListener("click", handleListClick);
 
-fetch("https://bytegrad.com/course-assets/js/1/api/feedbacks")
+fetch(`${BASE_API}/feedbacks`)
   .then((res) => res.json())
   .then((data) => {
     spinner.remove();
